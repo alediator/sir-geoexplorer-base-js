@@ -340,7 +340,8 @@ Viewer.widgets.SaveLayerPanel = Ext.extend(Ext.Container, {
                 opacity: layer.opacity ? layer.opacity : 1,
                 maxExtent: layer.maxExtent.toString(),
                 format: layer.params.FORMAT,
-                layers: layer.params.LAYERS
+                layers: layer.params.LAYERS,
+                layerTitle: this.target.layerName
                 //TODO:  ,
                 // format: layer.params.FORMAT,
                 // layers: layer.params.LAYERS
@@ -349,7 +350,7 @@ Viewer.widgets.SaveLayerPanel = Ext.extend(Ext.Container, {
         };
 
         var params = {
-                name: this.target.layerName,
+                name: layer.params.LAYERS,
                 server_resource: layer.url,
                 type: this.target.KNOWN_TYPES.WMS,
                 properties: properties
