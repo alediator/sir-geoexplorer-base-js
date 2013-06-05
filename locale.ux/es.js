@@ -695,6 +695,19 @@ GeoExt.Lang.add(
     'Viewer.plugins.FichaInversion.prototype' : {
         waitText: "Por favor, espere...",
         errorText: "Ocurrió un error, pruebe de nuevo en unos instantes."
+    },
+
+    "Viewer.plugins.DownloadifyExporter.prototype":{
+        windowSelecterTitle: "Exportaci\u00F3n de '{0}' a {1}",
+        downloadFileText: "{0}_{1}.xml",
+        downloadErrorTitleText: "Error al exportar",
+        layerEmptyText: "No es posible exportar una capa vac\u00EDa",
+        downloadErrorText: "Error al exportar la capa.",
+        downloadCancelTitleText: "Exportaci\u00F3n cancelada",
+        downloadCancelText: "Has cancelando la exportaci\u00F3n de la capa seleccionada.",
+        downloadSuccessTitleText: "Hecho",
+        downloadSuccessText: "Se ha exportado con \u00E9xito la capa '{1}' al formato '{0}'",
+        downloadImage: "/downloadify/download.png" //TODO: i18n
     }
 
 });

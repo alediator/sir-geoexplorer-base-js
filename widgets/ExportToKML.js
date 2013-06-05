@@ -24,10 +24,11 @@
  * by the GNU General Public License.
  *
  * Author: Moisés Arcos Santiago <marcos@emergya.com>
+ * Author: Alejandro Díaz Torres <adiaz@emergya.com>
  */
 
 /**
- * @requires plugins/Tool.js
+ * @requires widgets/LayerExporter.js
  */
 
 /** api: (define)
@@ -45,8 +46,10 @@ Ext.namespace('Viewer.plugins');
  *
  * Plugin for exporting a selected layer to kml file. TODO Make this plural -
  * selected layers
+ * 
+ * adiaz: Use of LayerExporter to improve number of layer's export requests.
  */
-Viewer.plugins.ExportToKML = Ext.extend(gxp.plugins.Tool, {
+Viewer.plugins.ExportToKML = Ext.extend(Viewer.plugins.LayerExporter, {
 
     /** api: ptype = vw_exporttokml */
     ptype: 'vw_exporttokml',
@@ -55,6 +58,7 @@ Viewer.plugins.ExportToKML = Ext.extend(gxp.plugins.Tool, {
     exportToKMLMsg: 'Generating KML File ...',
     exportToKMLErrorTitle: 'Error',
     exportToKMLErrorContent: 'Error to export the layer',
+    exportType: 'KML',
     objectOwner: 'map',
     selectedLayer: null,
 
@@ -78,56 +82,7 @@ Viewer.plugins.ExportToKML = Ext.extend(gxp.plugins.Tool, {
             disabled: true,
             tooltip: this.exportToKMLTooltipText,
             handler: function() {
-                var urlToExport = null;
-                var paramsToExport = null;
-                var urlLocalGeoServer = app.sources.local.url.replace('/ows', '');
-                if (this.selectedLayer && this.selectedLayer.url) {
-                    if (this.selectedLayer.url.indexOf(urlLocalGeoServer) != -1) {
-                        urlToExport = urlLocalGeoServer;
-                    }
-                }
-                var contextLayer = null;
-                if (this.selectedLayer.params && this.selectedLayer.params.LAYERS) {
-                    if (this.selectedLayer.params.LAYERS.indexOf(':') != -1) {
-                        contextLayer = this.selectedLayer.params.LAYERS.split(':')[0];
-                    }
-                }
-                if (contextLayer != null) {
-                    urlToExport += '/' + contextLayer + '/wms/kml';
-                }
-
-                paramsToExport = {
-                    'layers': this.selectedLayer.params.LAYERS,
-                    'DOWNLOAD': true,
-                    'FILENAME': this.selectedLayer.params.LAYERS + '.kml'
-                };
-
-                Ext.MessageBox.wait(this.exportToKMLMsg);
-
-                Ext.Ajax.request({
-                    url: urlToExport,
-                    params: paramsToExport,
-                    method: 'GET',
-                    disableCaching: false,
-                    success: function(o, r, n) {
-                        var elemIF = document.createElement('iframe');
-                        elemIF.src = app.proxy + encodeURIComponent(this.prepareUrlToDownload(r));
-                        elemIF.style.display = 'none';
-                        document.body.appendChild(elemIF);
-                        Ext.MessageBox.updateProgress(1);
-                        Ext.MessageBox.hide();
-                    },
-                    failure: function(o, r, n) {
-                        Ext.MessageBox.updateProgress(1);
-                        Ext.MessageBox.hide();
-                        Ext.Msg.show({
-                            title: this.exportToKMLErrorTitle,
-                            msg: this.exportToKMLErrorContent,
-                            buttons: Ext.Msg.OK
-                        });
-                    },
-                    scope: this
-                });
+                this.addOutput();
             },
             scope: this
         }]);
@@ -150,25 +105,6 @@ Viewer.plugins.ExportToKML = Ext.extend(gxp.plugins.Tool, {
         this.enableOrDisableAction();
     },
 
-    prepareUrlToDownload: function(data) {
-        var urlToReturn = null;
-        if (data != null) {
-            urlToReturn = data.url;
-            if (data.params != null) {
-                var first = true;
-                for (p in data.params) {
-                    if (first) {
-                        first = false;
-                        urlToReturn += '?';
-                    } else {
-                        urlToReturn += '&';
-                    }
-                    urlToReturn += p + '=' + data.params[p];
-                }
-            }
-        }
-        return urlToReturn;
-    },
     isLocalGeoserver: function(url) {
         var urlLocalGeoServer = app.sources.local.url.replace('/ows', '');
         if (url && url.indexOf(urlLocalGeoServer) != -1) {
@@ -191,9 +127,44 @@ Viewer.plugins.ExportToKML = Ext.extend(gxp.plugins.Tool, {
             }, this);
         }
 
+    },
+
+
+    /** api:method[getLayerIdentifier]
+     *  Generate request parameters to sava a KML file
+     */
+    generateRequestParameters: function(){
+        var urlToExport = null;
+        var paramsToExport = null;
+        var urlLocalGeoServer = app.sources.local.url.replace('/ows', '');
+        if (this.selectedLayer && this.selectedLayer.url) {
+            if (this.selectedLayer.url.indexOf(urlLocalGeoServer) != -1) {
+                urlToExport = urlLocalGeoServer;
+            }
+        }
+        var contextLayer = null;
+        if (this.selectedLayer.params && this.selectedLayer.params.LAYERS) {
+            if (this.selectedLayer.params.LAYERS.indexOf(':') != -1) {
+                contextLayer = this.selectedLayer.params.LAYERS.split(':')[0];
+            }
+        }
+        if (contextLayer != null) {
+            urlToExport += '/' + contextLayer + '/wms/kml';
+        }
+
+        this.fileName = this.selectedLayer.params.LAYERS + '.kml';
+
+        paramsToExport = {
+            'layers': this.selectedLayer.params.LAYERS,
+            'DOWNLOAD': true,
+            'FILENAME': this.fileName
+        };
+
+        return{
+            url: urlToExport,
+            params: paramsToExport
+        }
     }
-
-
 
 });
 
