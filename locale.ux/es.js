@@ -707,7 +707,7 @@ GeoExt.Lang.add(
         downloadCancelText: "Has cancelando la exportaci\u00F3n de la capa seleccionada.",
         downloadSuccessTitleText: "Hecho",
         downloadSuccessText: "Se ha exportado con \u00E9xito la capa '{1}' al formato '{0}'",
-        downloadImage: "/theme/ux/img/downloadify/download.png" //TODO: i18n
+        downloadImage: "/theme/ux/downloadify/download.png" //TODO: i18n
     }
 
 });

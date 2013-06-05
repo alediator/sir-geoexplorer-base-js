@@ -54,8 +54,8 @@ Viewer.plugins.DownloadifyExporter = Ext.extend(Ext.Component, {
     /** i18n */
     downloadFileText : "{0}_{1}.{2}",
     downloadFileExtension: "xml",
-    downloadImage : "/theme/ux/img/downloadify/download.png",
-    swf: '/theme/ux/img/downloadify/downloadify.swf',
+    downloadImage : "/theme/ux/downloadify/download.png",
+    swf: '/theme/ux/downloadify/downloadify.swf',
     downloadErrorTitleText : "Download Error",
     layerEmptyText : "You can't export an empty layer",
     downloadErrorText : "You must put something in the File Contents or there will be nothing to save!",
