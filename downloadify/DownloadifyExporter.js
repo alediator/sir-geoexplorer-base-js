@@ -151,8 +151,8 @@ Viewer.plugins.DownloadifyExporter = Ext.extend(Ext.Component, {
      * Parameters url - <String> to parsed
      */
     getRootAppFile: function(url){
-        if(document.URL.indexOf("/moduloCartografico/composer")  != -1){
-            return document.URL.replace("/moduloCartografico/composer", url);
+        if(document.URL.indexOf("/moduloCartografico/composer/")  != -1){
+            return document.URL.replace("/moduloCartografico/composer/", "/moduloCartografico/" + url);
         }else{
             return url;
         }
