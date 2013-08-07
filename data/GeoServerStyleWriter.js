@@ -46,7 +46,7 @@ Viewer.data.GeoServerStyleWriter = Ext.extend(gxp.plugins.GeoServerStyleWriter, 
      *  This modification encode URL to save styleNames with spaces.
      */
     writeStyle: function(styleRec, dispatchQueue) {
-        var styleName = styleRec.get("userStyle").name;
+        var styleName = encodeURI(styleRec.get("userStyle").name);
 
         // #75731. Repair URL to make correct REST request
         var url = this.baseUrl + "/styles" + (styleRec.phantom === true ?
@@ -100,6 +100,7 @@ Viewer.data.GeoServerStyleWriter = Ext.extend(gxp.plugins.GeoServerStyleWriter, 
         }else if(geoserverLayerName.indexOf(":")>-1){
             geoserverLayerName = geoserverLayerName.split(":")[1];
         }
+        geoserverLayerName = encodeURI(geoserverLayerName);
         return geoserverLayerName;
     },
 
@@ -115,6 +116,8 @@ Viewer.data.GeoServerStyleWriter = Ext.extend(gxp.plugins.GeoServerStyleWriter, 
         var geoserverLayerName = this.getGeoserverLayerName();
 
         this.target.stylesStore.each(function(rec) {
+            rec.data.name = encodeURI(rec.data.name); // fixes #86678 issue encoding style name
+            rec.data.userStyle.name = encodeURI(rec.data.userStyle.name); // fixes #86678 issue encoding style name
             if (!defaultStyle && rec.get("userStyle").isDefault === true) {
                 defaultStyle = rec.get("name");
             }
